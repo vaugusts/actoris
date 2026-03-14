@@ -1,0 +1,12 @@
+{
+  "standardUser": {
+    "username": "standard_user",
+    "password": "secret_sauce",
+    "expectedWelcome": "Welcome, standard_user"
+  },
+  "adminUser": {
+    "username": "admin_user",
+    "password": "admin_secret",
+    "expectedWelcome": "Welcome, admin_user"
+  }
+}

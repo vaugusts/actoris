@@ -1,0 +1,41 @@
+project:
+  name: local-agent-automation-framework
+  environment: local
+  baseUrl: http://127.0.0.1:3100
+  mockBaseUrl: http://127.0.0.1:3100
+execution:
+  artifactsDir: .artifacts
+  headless: true
+  retries: 1
+  tags:
+    - smoke
+    - regression
+  timeoutMs: 30000
+drivers:
+  defaultUi: playwright
+  defaultMobile: appium
+adapters:
+  configSources:
+    - name: file-config
+      options:
+        path: configs/environments/local.yaml
+  dataSources:
+    - name: file-data
+      options:
+        path: tests/data/users.json
+        namespace: users
+  secretSources:
+    - name: env-secrets
+      options:
+        keys:
+          reportApiToken: REPORT_API_TOKEN
+          mockApiToken: MOCK_API_TOKEN
+  resultSinks:
+    - name: file-results
+      options:
+        directory: .artifacts/results
+  logSinks:
+    - name: console-log
+ai:
+  enabled: true
+  provider: heuristic

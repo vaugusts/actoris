@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: automation-framework-config
+data:
+  local.yaml: |
+    project:
+      environment: aks
+      baseUrl: https://your-app.example.internal
+    execution:
+      headless: true

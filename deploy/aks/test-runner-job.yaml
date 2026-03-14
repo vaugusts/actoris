@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: automation-test-runner
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: test-runner
+          image: your-registry.azurecr.io/local-agent-automation:latest
+          imagePullPolicy: Always
+          env:
+            - name: TEST_ENV
+              value: aks
+            - name: REPORT_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: automation-framework-secrets
+                  key: report-api-token
+          command:
+            - npm
+            - run
+            - test:all
+          volumeMounts:
+            - name: config
+              mountPath: /app/configs/environments
+      volumes:
+        - name: config
+          configMap:
+            name: automation-framework-config

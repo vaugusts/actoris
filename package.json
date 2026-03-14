@@ -1,0 +1,88 @@
+{
+  "name": "local-agent-automation-framework",
+  "version": "0.1.0",
+  "description": "gTAA-inspired multi-channel automation framework with BDD, keyword-driven, data-driven, POM, mock services, and cloud-ready adapters.",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "mock:start": "tsx src/mock/server.ts",
+    "test": "vitest run tests/unit tests/integration/api.spec.ts tests/integration/db.spec.ts",
+    "test:keywords": "tsx src/cli/run-keyword.ts tests/keywords/login.keyword.json",
+    "test:bdd": "node --import tsx ./node_modules/@cucumber/cucumber/bin/cucumber-js --require tests/bdd/steps/**/*.ts tests/bdd/features/**/*.feature",
+    "test:ui": "tsx src/cli/run-ui-smoke.ts",
+    "test:mobile": "tsx src/cli/run-mobile-smoke.ts",
+    "test:all": "npm run typecheck && npm run test && npm run test:keywords"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "commander": "^14.0.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "graphql": "^16.11.0",
+    "graphql-http": "^1.22.4",
+    "js-yaml": "^4.1.0",
+    "pino": "^10.0.0",
+    "ws": "^8.18.3",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.2.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.5.2",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@azure/identity": "^4.13.0",
+    "@azure/keyvault-secrets": "^4.10.0",
+    "@azure/storage-blob": "^12.29.1",
+    "@elastic/elasticsearch": "^8.19.1",
+    "appium": "^3.0.2",
+    "nodemailer": "^7.0.5",
+    "playwright-core": "^1.55.0",
+    "selenium-webdriver": "^4.35.0",
+    "webdriverio": "^9.19.2"
+  },
+  "peerDependenciesMeta": {
+    "@playwright/test": {
+      "optional": true
+    },
+    "@azure/identity": {
+      "optional": true
+    },
+    "@azure/keyvault-secrets": {
+      "optional": true
+    },
+    "@azure/storage-blob": {
+      "optional": true
+    },
+    "@elastic/elasticsearch": {
+      "optional": true
+    },
+    "appium": {
+      "optional": true
+    },
+    "nodemailer": {
+      "optional": true
+    },
+    "playwright-core": {
+      "optional": true
+    },
+    "selenium-webdriver": {
+      "optional": true
+    },
+    "webdriverio": {
+      "optional": true
+    }
+  }
+}

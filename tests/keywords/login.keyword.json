@@ -1,0 +1,30 @@
+{
+  "id": "keyword-login-smoke",
+  "name": "Keyword login smoke",
+  "channel": "keyword",
+  "driver": "mock-browser",
+  "dataKey": "standardUser",
+  "steps": [
+    {
+      "keyword": "openApp"
+    },
+    {
+      "keyword": "loginWithData"
+    },
+    {
+      "keyword": "assertWelcomeMessage",
+      "args": {
+        "expected": "{{data.expectedWelcome}}"
+      }
+    },
+    {
+      "keyword": "assertDashboardGreeting",
+      "args": {
+        "expected": "{{data.expectedWelcome}}"
+      }
+    },
+    {
+      "keyword": "closeApp"
+    }
+  ]
+}
