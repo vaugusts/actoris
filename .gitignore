@@ -1,1 +1,9 @@
 .venv/
+node_modules/
+dist/
+.artifacts/
+.coverage/
+playwright-report/
+test-results/
+.env
+.DS_Store
