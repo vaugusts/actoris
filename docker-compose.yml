@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  automation:
+    build:
+      context: .
+    environment:
+      TEST_ENV: local
+      MOCK_PORT: 3100
+    volumes:
+      - ./.artifacts:/workspace/.artifacts
+    command: npm test

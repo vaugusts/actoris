@@ -1,0 +1,24 @@
+{
+  "id": "keyword-login-001",
+  "name": "Keyword login with local data",
+  "channel": "keyword",
+  "driver": "mock-browser",
+  "dataKey": "standard",
+  "steps": [
+    {
+      "keyword": "openApp"
+    },
+    {
+      "keyword": "loginWithData"
+    },
+    {
+      "keyword": "assertWelcomeMessage",
+      "args": {
+        "expected": "{{data.expectedWelcome}}"
+      }
+    },
+    {
+      "keyword": "closeApp"
+    }
+  ]
+}

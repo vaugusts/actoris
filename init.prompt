@@ -1,0 +1,291 @@
+# Codex Prompt: Enterprise Test Automation Framework
+
+You are a senior test automation architect and principal engineer.
+
+Design and generate a **production-grade, full-fledged test automation framework** for **actoris-test-automation-platform** targeting a **multi-platform SaaS product and services ecosystem with web UI, APIs, mobile app, and backend data stores**.
+
+The framework must be designed as a **scalable, enterprise-ready platform**, not just a demo or toy project.
+
+## Primary objectives
+
+Create a framework that:
+
+- follows **gTAA (Generic Test Automation Architecture)**
+- supports **BDD**
+- supports **Keyword-Driven Testing**
+- supports **Data-Driven Testing**
+- follows **POM (Page Object Model)** where applicable
+- supports **API testing, UI testing, Mobile testing, and Database testing**
+- supports multiple automation engines/drivers:
+  - **Selenium**
+  - **Playwright**
+  - **WebdriverIO**
+  - **Appium**
+- includes **handy local mock services** for different API styles and protocols
+- can run both:
+  - **locally for developers/testers**
+  - as a **Docker image**
+  - and be deployable to **AKS**
+- is designed for **extension with Agentic AI capabilities**
+
+## Architecture requirements
+
+The framework must be aligned with **gTAA principles**, with clear modular separation of:
+
+- test definition layer
+- business/action layer
+- adapter/integration layer
+- execution/orchestration layer
+- reporting/observability layer
+- test data/configuration/secrets management layer
+
+Externalize and modularize components as much as possible.
+
+The framework must support pluggable adapters to connect to different sources for:
+
+- configuration
+- environment metadata
+- secrets
+- test data
+- test case selection
+- result publishing
+- logging and telemetry
+
+## Adapter capabilities
+
+Design adapters so the framework can connect to systems such as:
+
+- **API endpoints** for configuration or test execution metadata
+- **database systems** for test data, runtime config, or result storage
+- **storage services / object stores** for datasets and configuration
+- **Key Vault / secret managers** for credentials and secrets
+- **email or messaging services** for report delivery
+- **ElasticSearch / time-series databases / observability backends** for logs, metrics, and traces
+
+Use abstractions/interfaces so these integrations are replaceable without rewriting the framework core.
+
+## Mocking requirements
+
+Provide local mock-service support for **multiple API/protocol types**, for example:
+
+- REST
+- GraphQL
+- gRPC
+- WebSocket
+- SOAP
+- database stubs or seeded test DB
+- message broker simulation if relevant
+
+The mock layer should be practical for local development and CI, with sample mock implementations and clear extensibility.
+
+## Quality and engineering standards
+
+The framework must follow **industry best practices** for enterprise automation engineering, including:
+
+- maintainability
+- extensibility
+- modularity
+- test isolation
+- parallel execution readiness
+- environment portability
+- CI/CD friendliness
+- containerization
+- observability
+- secure secrets handling
+- clean code and package structure
+- robust reporting
+- failure triage support
+- reusable abstractions
+- low coupling and high cohesion
+
+## Agentic AI extensibility
+
+The framework must be designed so it can later be extended with Agentic AI features such as:
+
+- test generation assistance
+- intelligent test selection
+- flaky test analysis
+- failure triage
+- self-healing suggestions
+- intelligent data generation
+- root cause analysis assistance
+- report summarization
+
+Do not over-engineer speculative AI behavior, but explicitly design the extension points, contracts, and module boundaries needed for future AI integration.
+
+## Required output format
+
+Generate the response in the following structure:
+
+### 1. Executive design summary
+
+Explain the framework at a high level, its goals, and why the chosen architecture fits the requirements.
+
+### 2. Technology stack recommendation
+
+Recommend the most suitable stack for **TypeScript**, **tsc**, **esbuild**, **Vite** (if needed), **Vitest**, **Cucumber.js**, **Azure DevOps Pipelines**, **Docker**, and **local, dev, qa, staging, production-like** environments.
+
+Treat these as different layers of the toolchain, not as strict substitutes:
+
+- **tsc** = TypeScript compiler and type checker
+- **esbuild** = bundler/transpiler/minifier for packaging when needed
+- **Vite** = frontend dev server or tool orchestration layer when relevant
+
+Also explain trade-offs between the supported drivers/tools:
+
+- Selenium
+- Playwright
+- WebdriverIO
+- Appium
+
+### 3. Target repository structure
+
+Provide a full repository/folder structure with explanation of each major module.
+
+### 4. gTAA mapping
+
+Map every major part of the framework to gTAA concepts and explain the responsibility boundaries.
+
+### 5. Core framework design
+
+Define:
+
+- core modules
+- interfaces
+- adapters
+- base classes
+- execution flow
+- configuration resolution flow
+- test data flow
+- reporting flow
+- logging/telemetry flow
+
+### 6. Multi-driver strategy
+
+Explain how the framework supports multiple drivers without making the design messy.
+Define when to use abstraction and when to allow driver-specific features.
+
+### 7. Testing modality support
+
+Show how the framework supports:
+
+- UI testing
+- API testing
+- mobile testing
+- database testing
+
+Include reusable patterns for each.
+
+### 8. BDD + Keyword-Driven + Data-Driven integration model
+
+Explain how all three can coexist in one framework without conflicts.
+Show recommended boundaries and execution flow.
+
+### 9. Mock services design
+
+Describe the local mock-service architecture, tooling choices, and sample use cases.
+
+### 10. Config, secrets, and environment strategy
+
+Show how to support:
+
+- local config
+- environment-based config
+- remote config
+- secret vault integration
+- external test data sources
+- runtime selection of test cases
+
+### 11. Reporting and observability
+
+Design a reporting approach that supports:
+
+- local HTML reports
+- CI reports
+- machine-readable outputs
+- pushing results to API/DB
+- log/metric export to ElasticSearch or time-series backends
+
+### 12. Docker and AKS deployment model
+
+Explain how to containerize the framework and run it in AKS, including:
+
+- image structure
+- runtime config injection
+- secrets handling
+- scale-out / parallel execution considerations
+
+### 13. Sample implementation
+
+Generate representative code samples for the core framework, including:
+
+- base test structure
+- driver factory
+- config adapter interface
+- secret provider interface
+- test data provider
+- reporting adapter
+- one BDD example
+- one keyword-driven example
+- one data-driven example
+- one Page Object example
+- one mock-service example
+- one API test example
+- one DB test example
+
+### 14. Best practices checklist
+
+Provide a concrete checklist for enterprise readiness.
+
+### 15. Phased implementation roadmap
+
+Provide a practical implementation plan with phases:
+
+- MVP
+- production-ready baseline
+- enterprise integration phase
+- AI extension phase
+
+## Constraints and expectations
+
+- Do not produce a simplistic sample project.
+- Do not collapse everything into one module.
+- Do not ignore maintainability trade-offs.
+- Do not assume only UI testing.
+- Do not hard-code a single environment.
+- Do not hard-code secrets.
+- Do not design only for local execution.
+- Do not make AI a mandatory runtime dependency unless justified.
+
+## Assumptions to use
+
+Use these assumptions unless overridden below:
+
+- primary language: **TypeScript**
+- package/dependency manager: **npm**
+- TypeScript compiler: **tsc**
+- bundler/transpiler: **esbuild**
+- dev server/tool orchestration: **Vite** (optional)
+- test runner: **Vitest**
+- BDD framework: **Cucumber.js**
+- reporting stack: **Allure + JUnit XML + HTML reports**
+- container runtime: **Docker**
+- orchestration target: **AKS**
+- CI/CD platform: **Azure DevOps Pipelines**
+- configuration sources: **local YAML/JSON files, environment variables, remote config service**
+- secret sources: **.env for local development, Azure Key Vault for CI/CD and AKS**
+- result destinations: **local reports, JUnit XML artifacts, REST result API, PostgreSQL**
+- logging/telemetry backends: **OpenTelemetry, Elasticsearch, Prometheus, Grafana**
+- supported environments: **local, dev, qa, staging, production-like**
+- target applications: **web application, mobile application, REST/GraphQL APIs, databases, event-driven services**
+- database types: **PostgreSQL, SQL Server, MongoDB**
+- API/protocol types: **REST, GraphQL, gRPC, WebSocket, SOAP, Kafka/AMQP**
+
+## Final instruction
+
+Produce a **detailed architecture and starter implementation blueprint** that a senior engineering team could realistically use as the basis for building the framework.
+
+Prioritize pragmatic enterprise design over academic completeness.
+Where there are multiple valid options, recommend one default approach and briefly explain alternatives.
+Include enough code and structure that the output can be used as the starting point for implementation.
+Call out risks, trade-offs, and anti-patterns explicitly.

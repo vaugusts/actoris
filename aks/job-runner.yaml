@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: actoris-automation-smoke
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: automation
+          image: actoris-test-automation-platform:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TEST_ENV
+              value: qa
+            - name: TEST_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: actoris-automation-secrets
+                  key: TEST_API_TOKEN
+          command: ["npm", "run", "test:integration"]

@@ -1,0 +1,84 @@
+project:
+  name: actoris-test-automation-platform
+  environment: local
+  baseUrl: http://127.0.0.1:3100
+  mockBaseUrl: http://127.0.0.1:3100
+
+execution:
+  artifactsDir: .artifacts
+  headless: true
+  retries: 1
+  tags: []
+  timeoutMs: 30000
+  parallelWorkers: 2
+
+drivers:
+  defaultUi: mock-browser
+  defaultMobile: appium
+  preferredUiForCi: playwright
+
+adapters:
+  configSources:
+    - name: http-config
+      options:
+        endpoint: ""
+        enabled: false
+  dataSources:
+    - name: file-data
+      options:
+        path: data/users.json
+        namespace: users
+  secretSources:
+    - name: env-secrets
+      options:
+        keys:
+          apiToken: TEST_API_TOKEN
+  resultSinks:
+    - name: file-results
+      options:
+        directory: .artifacts/results
+    - name: http-results
+      options:
+        endpoint: ${RESULT_API_URL}
+        enabled: false
+  logSinks:
+    - name: console-log
+    - name: elastic-log
+      options:
+        endpoint: ${ELASTIC_ENDPOINT}
+        enabled: false
+    - name: timeseries-log
+      options:
+        endpoint: ${PROM_PUSHGATEWAY}
+        enabled: false
+
+ai:
+  enabled: true
+  provider: heuristic
+
+environments:
+  dev:
+    project:
+      environment: dev
+      baseUrl: https://dev.actoris.example
+  qa:
+    project:
+      environment: qa
+      baseUrl: https://qa.actoris.example
+    execution:
+      retries: 2
+      parallelWorkers: 4
+  staging:
+    project:
+      environment: staging
+      baseUrl: https://staging.actoris.example
+    execution:
+      retries: 2
+      parallelWorkers: 6
+  production-like:
+    project:
+      environment: production-like
+      baseUrl: https://prodlike.actoris.example
+    execution:
+      retries: 0
+      parallelWorkers: 8

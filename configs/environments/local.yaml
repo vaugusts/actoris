@@ -1,0 +1,6 @@
+project:
+  environment: local
+execution:
+  headless: true
+drivers:
+  defaultUi: mock-browser
