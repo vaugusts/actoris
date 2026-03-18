@@ -12,12 +12,13 @@ The default implementation stays pragmatic: it is runnable with lightweight loca
 - `npm run test:bdd` runs the Cucumber example.
 - `npm run test:keyword` runs the JSON keyword example.
 - `npm run test:ui:smoke` runs the local UI smoke path against the mock browser driver.
-- `npm run test:google -- "Playwright"` opens a real browser with Playwright, goes to Google, searches for the query, and saves a screenshot under `.artifacts/google/`.
+- `npm run test:google -- "Playwright"` opens a real browser with Playwright, goes to Google, searches for the query, and saves a screenshot under a run-scoped directory such as `.artifacts/runs/<run-id>/google/`.
 - `npm run test:vnexpress:ai` opens `vnexpress.net`, lets OpenAI choose the next clickable component, navigates toward the requested category page, extracts five articles from that section, and verifies they match the category. The default browser backend is now `playwright-mcp`, with `--browser-mode playwright` available as a fallback.
 
 For the Google example, install a browser once with `npx playwright install chromium`.
 Google may still serve an anti-bot "unusual traffic" page; when that happens the script now fails intentionally and writes `google-search-failure.png` instead of claiming success.
 For the VnExpress AI flow, set `OPENAI_API_KEY` first. You can also override the target category, for example `npm run test:vnexpress:ai -- --category "Giải trí"`, switch browser backends with `--browser-mode playwright-mcp` or `--browser-mode playwright`, or adjust the AI navigation budget with `--max-steps 4`.
+Each CLI execution now creates its own artifact directory under `.artifacts/runs/<run-id>/`.
 
 ## 2. Technology Stack Recommendation
 
@@ -110,7 +111,7 @@ The local mock layer exposes REST, GraphQL, SOAP-style HTTP, WebSocket echo even
 
 ## 11. Reporting and Observability
 
-- Local machine-readable results: JSON under `.artifacts/results`
+- Local machine-readable results: JSON under `.artifacts/runs/<run-id>/results`
 - CI-ready outputs: Cucumber JSON and JUnit XML under `.artifacts/reports`
 - Telemetry export: console, Elastic-style HTTP sink, and a Prometheus-push style sink
 - AI extension point: `AgenticAdvisor` for flaky test triage, failure summarization, and future intelligent selection

@@ -16,7 +16,7 @@ program
     const kernel = new AutomationKernel();
     const context = await kernel.bootstrap();
     const driver = kernel.createUiDriver(context, "playwright");
-    const screenshotDir = path.resolve(".artifacts/google");
+    const screenshotDir = path.join(context.run.artifactsDir, "google");
     const successScreenshotPath = path.join(screenshotDir, "google-search.png");
     const failureScreenshotPath = path.join(screenshotDir, "google-search-failure.png");
 

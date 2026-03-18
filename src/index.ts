@@ -1,5 +1,6 @@
 export * from "./ai/HeuristicAgenticAdvisor";
 export * from "./ai/OpenAIStructuredAnalyzer";
+export * from "./core/artifacts";
 export * from "./core/contracts";
 export * from "./core/kernel";
 export * from "./drivers/api/ApiClient";

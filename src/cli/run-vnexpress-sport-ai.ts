@@ -71,7 +71,7 @@ program
     const kernel = new AutomationKernel();
     const context = await kernel.bootstrap();
     const startedAt = new Date();
-    const artifactsDir = path.resolve(".artifacts/vnexpress-ai");
+    const artifactsDir = path.join(context.run.artifactsDir, "vnexpress-ai");
     const browserMode = parseBrowserMode(options.browserMode);
     const categorySlug = slugify(options.category);
     const screenshotPath = path.join(artifactsDir, `vnexpress-${categorySlug}-${browserMode}-page.png`);

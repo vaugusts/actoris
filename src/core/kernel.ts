@@ -24,6 +24,7 @@ import { PlaywrightDriver } from "../drivers/ui/PlaywrightDriver";
 import { PlaywrightMcpDriver } from "../drivers/ui/PlaywrightMcpDriver";
 import { SeleniumDriver } from "../drivers/ui/SeleniumDriver";
 import { WebdriverIODriver } from "../drivers/ui/WebdriverIODriver";
+import { createExecutionRun, type ExecutionRun } from "./artifacts";
 import {
   AgenticAdvisor,
   RuntimeConfiguration,
@@ -42,6 +43,7 @@ export interface BootstrapOptions {
 }
 
 export interface ExecutionContext {
+  run: ExecutionRun;
   config: RuntimeConfiguration;
   data: Record<string, unknown>;
   secrets: Record<string, string>;
@@ -82,6 +84,8 @@ export class AutomationKernel {
       Object.assign(secrets, await adapter.resolveAll(source.options));
     }
 
+    const rootArtifactsDir = path.resolve(process.cwd(), config.execution.artifactsDir);
+    const run = await createExecutionRun(rootArtifactsDir, environment);
     const logger = new CompositeLogger(
       config.adapters.logSinks.map((sinkReference) => ({
         sink: this.registry.createLogSink(sinkReference.name, sinkReference.options),
@@ -94,10 +98,13 @@ export class AutomationKernel {
     await logger.info("Automation kernel bootstrapped", {
       environment,
       project: config.project.name,
-      defaultUiDriver: config.drivers.defaultUi
+      defaultUiDriver: config.drivers.defaultUi,
+      runId: run.id,
+      runArtifactsDir: run.artifactsDir
     });
 
     return {
+      run,
       config,
       data,
       secrets,
@@ -112,14 +119,45 @@ export class AutomationKernel {
   async publishResult(context: ExecutionContext, result: TestExecutionResult): Promise<void> {
     await Promise.all(
       context.config.adapters.resultSinks.map(async (sinkReference) => {
-        const sink = this.registry.createResultSink(sinkReference.name, sinkReference.options);
-        await sink.publish(result, sinkReference.options);
+        const sinkOptions = this.resolveResultSinkOptions(context, sinkReference.name, sinkReference.options);
+        const sink = this.registry.createResultSink(sinkReference.name, sinkOptions);
+        await sink.publish(result, sinkOptions);
       })
     );
   }
 
-  createUiDriver(context: ExecutionContext, kind?: string): UiDriver {
-    return context.registry.createDriver(kind ?? context.config.drivers.defaultUi);
+  createUiDriver(
+    context: ExecutionContext,
+    kind?: string,
+    options?: Record<string, unknown>
+  ): UiDriver {
+    const resolvedKind = kind ?? context.config.drivers.defaultUi;
+    return context.registry.createDriver(resolvedKind, {
+      outputDir: path.join(context.run.artifactsDir, "drivers", resolvedKind),
+      ...options
+    });
+  }
+
+  private resolveResultSinkOptions(
+    context: ExecutionContext,
+    sinkName: string,
+    options?: Record<string, unknown>
+  ): Record<string, unknown> {
+    if (sinkName === "file-results") {
+      return {
+        ...options,
+        directory: path.join(context.run.artifactsDir, "results")
+      };
+    }
+
+    if (sinkName === "smtp-results") {
+      return {
+        ...options,
+        directory: path.join(context.run.artifactsDir, "mail")
+      };
+    }
+
+    return options ?? {};
   }
 }
 
