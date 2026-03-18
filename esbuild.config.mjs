@@ -3,6 +3,8 @@ import { build } from "esbuild";
 await build({
   entryPoints: [
     "src/cli/run-keyword.ts",
+    "src/cli/run-google-search.ts",
+    "src/cli/run-vnexpress-sport-ai.ts",
     "src/cli/run-ui-smoke.ts",
     "src/cli/run-mobile-smoke.ts",
     "src/mock/server.ts"
@@ -14,7 +16,7 @@ await build({
   format: "cjs",
   target: "node22",
   external: [
-    "playwright-core",
+    "playwright",
     "selenium-webdriver",
     "webdriverio",
     "@azure/identity",

@@ -44,6 +44,22 @@ export class AppiumDriver implements UiDriver {
     return (await this.driver.$(selector)).isDisplayed();
   }
 
+  async title(): Promise<string> {
+    if (typeof this.driver?.getTitle === "function") {
+      return this.driver.getTitle();
+    }
+
+    return "";
+  }
+
+  async currentUrl(): Promise<string> {
+    if (typeof this.driver?.getUrl === "function") {
+      return this.driver.getUrl();
+    }
+
+    return "";
+  }
+
   async screenshot(filePath: string): Promise<void> {
     await this.driver.saveScreenshot(filePath);
   }

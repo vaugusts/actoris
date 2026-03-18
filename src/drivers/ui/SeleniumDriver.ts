@@ -41,6 +41,14 @@ export class SeleniumDriver implements UiDriver {
     return this.driver.findElement(this.by.css(selector)).isDisplayed();
   }
 
+  async title(): Promise<string> {
+    return this.driver.getTitle();
+  }
+
+  async currentUrl(): Promise<string> {
+    return this.driver.getCurrentUrl();
+  }
+
   async screenshot(filePath: string): Promise<void> {
     const screenshot = await this.driver.takeScreenshot();
     await fs.writeFile(filePath, screenshot, "base64");

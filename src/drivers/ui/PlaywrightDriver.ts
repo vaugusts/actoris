@@ -10,7 +10,7 @@ export class PlaywrightDriver implements UiDriver {
   constructor(private readonly defaults: Record<string, unknown> = {}) {}
 
   async start(options: DriverSessionOptions = {}): Promise<void> {
-    const { chromium } = await loadOptionalModule<any>("playwright-core");
+    const { chromium } = await loadOptionalModule<any>("playwright");
     this.browser = await chromium.launch({
       headless: options.headless ?? Boolean(this.defaults.headless ?? true),
       executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
@@ -24,19 +24,27 @@ export class PlaywrightDriver implements UiDriver {
   }
 
   async click(selector: string): Promise<void> {
-    await this.page.locator(selector).click();
+    await this.page.locator(selector).first().click();
   }
 
   async fill(selector: string, value: string): Promise<void> {
-    await this.page.locator(selector).fill(value);
+    await this.page.locator(selector).first().fill(value);
   }
 
   async text(selector: string): Promise<string> {
-    return (await this.page.locator(selector).textContent()) ?? "";
+    return (await this.page.locator(selector).first().textContent()) ?? "";
   }
 
   async isVisible(selector: string): Promise<boolean> {
-    return this.page.locator(selector).isVisible();
+    return this.page.locator(selector).first().isVisible();
+  }
+
+  async title(): Promise<string> {
+    return this.page.title();
+  }
+
+  async currentUrl(): Promise<string> {
+    return this.page.url();
   }
 
   async screenshot(filePath: string): Promise<void> {

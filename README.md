@@ -6,6 +6,19 @@ This repository is a production-oriented starter for a multi-modality automation
 
 The default implementation stays pragmatic: it is runnable with lightweight local mocks and a `mock-browser` driver, while preserving extension points for Playwright, Selenium, WebdriverIO, Appium, Azure Key Vault, external result APIs, Elastic-style logging backends, and future agentic AI modules.
 
+## Running It
+
+- `npm test` runs the Vitest unit and integration suites.
+- `npm run test:bdd` runs the Cucumber example.
+- `npm run test:keyword` runs the JSON keyword example.
+- `npm run test:ui:smoke` runs the local UI smoke path against the mock browser driver.
+- `npm run test:google -- "Playwright"` opens a real browser with Playwright, goes to Google, searches for the query, and saves a screenshot under `.artifacts/google/`.
+- `npm run test:vnexpress:ai` opens `vnexpress.net`, lets OpenAI choose the next clickable component from DOM-derived candidates, navigates toward the requested category page, extracts five articles from that section, and verifies they match the category.
+
+For the Google example, install a browser once with `npx playwright install chromium`.
+Google may still serve an anti-bot "unusual traffic" page; when that happens the script now fails intentionally and writes `google-search-failure.png` instead of claiming success.
+For the VnExpress AI flow, set `OPENAI_API_KEY` first. You can also override the target category, for example `npm run test:vnexpress:ai -- --category "Giải trí"` or adjust the AI navigation budget with `--max-steps 4`.
+
 ## 2. Technology Stack Recommendation
 
 - Language and build: TypeScript with `tsc` for type-safe compilation and declarations, plus `esbuild` for bundled operational entrypoints.

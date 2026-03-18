@@ -105,6 +105,8 @@ export interface UiDriver {
   fill(selector: string, value: string): Promise<void>;
   text(selector: string): Promise<string>;
   isVisible(selector: string): Promise<boolean>;
+  title(): Promise<string>;
+  currentUrl(): Promise<string>;
   screenshot(filePath: string): Promise<void>;
   close(): Promise<void>;
 }

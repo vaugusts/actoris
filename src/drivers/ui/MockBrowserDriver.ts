@@ -5,20 +5,20 @@ import { DriverSessionOptions, UiDriver } from "../../core/contracts";
 export class MockBrowserDriver implements UiDriver {
   readonly kind = "mock-browser" as const;
 
-  private currentUrl = "";
+  private currentPageUrl = "";
   private readonly fields = new Map<string, string>();
   private readonly texts = new Map<string, string>();
 
   constructor(private readonly defaults: Record<string, unknown> = {}) {}
 
   async start(_options: DriverSessionOptions = {}): Promise<void> {
-    this.currentUrl = "";
+    this.currentPageUrl = "";
     this.fields.clear();
     this.texts.clear();
   }
 
   async goto(url: string): Promise<void> {
-    this.currentUrl = url;
+    this.currentPageUrl = url;
     if (url.includes("/app/login")) {
       this.texts.set('[data-testid="welcome"]', "");
       this.texts.set('[data-testid="error"]', "");
@@ -61,12 +61,24 @@ export class MockBrowserDriver implements UiDriver {
     return selector === '[data-testid="username"]' || this.texts.has(selector);
   }
 
+  async title(): Promise<string> {
+    if (this.currentPageUrl.includes("/app/login")) {
+      return "Automation Portal";
+    }
+
+    return this.currentPageUrl ? "Mock Browser Page" : "";
+  }
+
+  async currentUrl(): Promise<string> {
+    return this.currentPageUrl;
+  }
+
   async screenshot(filePath: string): Promise<void> {
     await fs.writeFile(
       filePath,
       JSON.stringify(
         {
-          currentUrl: this.currentUrl,
+          currentUrl: this.currentPageUrl,
           fields: Object.fromEntries(this.fields.entries()),
           texts: Object.fromEntries(this.texts.entries()),
           defaults: this.defaults
@@ -79,7 +91,7 @@ export class MockBrowserDriver implements UiDriver {
   }
 
   async close(): Promise<void> {
-    this.currentUrl = "";
+    this.currentPageUrl = "";
     this.fields.clear();
     this.texts.clear();
   }

@@ -1,4 +1,5 @@
 export * from "./ai/HeuristicAgenticAdvisor";
+export * from "./ai/OpenAIStructuredAnalyzer";
 export * from "./core/contracts";
 export * from "./core/kernel";
 export * from "./drivers/api/ApiClient";
@@ -8,5 +9,7 @@ export * from "./keyword/KeywordRegistry";
 export * from "./mock/database";
 export * from "./mock/server";
 export * from "./pom/DashboardPage";
+export * from "./pom/GoogleSearchPage";
 export * from "./pom/LoginPage";
+export * from "./pom/VnExpressPage";
 export * from "./workflows/LoginWorkflow";

@@ -42,6 +42,14 @@ export class WebdriverIODriver implements UiDriver {
     return (await this.browser.$(selector)).isDisplayed();
   }
 
+  async title(): Promise<string> {
+    return this.browser.getTitle();
+  }
+
+  async currentUrl(): Promise<string> {
+    return this.browser.getUrl();
+  }
+
   async screenshot(filePath: string): Promise<void> {
     await this.browser.saveScreenshot(filePath);
   }
