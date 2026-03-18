@@ -1,6 +1,7 @@
 import type { Page } from "playwright";
 
 import { OpenAIStructuredAnalyzer } from "../ai/OpenAIStructuredAnalyzer";
+import { capturePlaywrightScreenshot } from "../drivers/ui/capturePlaywrightScreenshot";
 
 export interface NavigationCandidate {
   candidateId: string;
@@ -77,7 +78,7 @@ export class VnExpressPage {
   }
 
   async captureScreenshot(filePath: string): Promise<void> {
-    await this.page.screenshot({ path: filePath, fullPage: true });
+    await capturePlaywrightScreenshot(this.page, filePath);
   }
 
   async extractNavigationCandidates(
@@ -121,13 +122,13 @@ export class VnExpressPage {
       }
     });
 
-    this.validateNavigationSelection(candidates, selection);
+    const normalizedSelection = this.normalizeNavigationSelection(candidates, selection);
 
     return {
       homepageTitle,
       currentUrl,
       candidates,
-      selection
+      selection: normalizedSelection
     };
   }
 
@@ -355,10 +356,10 @@ export class VnExpressPage {
     }, { maxItems: limit, baseUrl: this.baseUrl });
   }
 
-  private validateNavigationSelection(
+  private normalizeNavigationSelection(
     candidates: NavigationCandidate[],
     selection: NavigationSelection
-  ): void {
+  ): NavigationSelection {
     const candidate = candidates.find((item) => item.candidateId === selection.candidateId);
 
     if (!candidate) {
@@ -367,10 +368,10 @@ export class VnExpressPage {
       );
     }
 
-    if (candidate.href !== selection.href || candidate.label !== selection.label) {
-      throw new Error(
-        `OpenAI returned mismatched navigation metadata for ${selection.candidateId}.`
-      );
-    }
+    return {
+      ...selection,
+      label: candidate.label,
+      href: candidate.href
+    };
   }
 }

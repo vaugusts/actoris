@@ -16,6 +16,10 @@ await build({
   format: "cjs",
   target: "node22",
   external: [
+    "@modelcontextprotocol/sdk",
+    "@modelcontextprotocol/sdk/*",
+    "@playwright/mcp",
+    "@playwright/mcp/*",
     "playwright",
     "selenium-webdriver",
     "webdriverio",

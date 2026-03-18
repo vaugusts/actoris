@@ -21,6 +21,7 @@ import { DatabaseClient } from "../drivers/database/DatabaseClient";
 import { AppiumDriver } from "../drivers/mobile/AppiumDriver";
 import { MockBrowserDriver } from "../drivers/ui/MockBrowserDriver";
 import { PlaywrightDriver } from "../drivers/ui/PlaywrightDriver";
+import { PlaywrightMcpDriver } from "../drivers/ui/PlaywrightMcpDriver";
 import { SeleniumDriver } from "../drivers/ui/SeleniumDriver";
 import { WebdriverIODriver } from "../drivers/ui/WebdriverIODriver";
 import {
@@ -138,6 +139,7 @@ export function createDefaultRegistry(): ModuleRegistry {
     .registerLogSink("elastic-log", (options) => new ElasticLogSink(options))
     .registerLogSink("timeseries-log", (options) => new TimeSeriesLogSink(options))
     .registerDriver("playwright", (options) => new PlaywrightDriver(options))
+    .registerDriver("playwright-mcp", (options) => new PlaywrightMcpDriver(options))
     .registerDriver("selenium", (options) => new SeleniumDriver(options))
     .registerDriver("webdriverio", (options) => new WebdriverIODriver(options))
     .registerDriver("appium", (options) => new AppiumDriver(options))

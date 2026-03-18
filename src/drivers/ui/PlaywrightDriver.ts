@@ -1,5 +1,6 @@
 import { DriverSessionOptions, UiDriver } from "../../core/contracts";
 import { loadOptionalModule } from "../../core/module-loader";
+import { capturePlaywrightScreenshot } from "./capturePlaywrightScreenshot";
 
 export class PlaywrightDriver implements UiDriver {
   readonly kind = "playwright" as const;
@@ -48,7 +49,7 @@ export class PlaywrightDriver implements UiDriver {
   }
 
   async screenshot(filePath: string): Promise<void> {
-    await this.page.screenshot({ path: filePath, fullPage: true });
+    await capturePlaywrightScreenshot(this.page, filePath);
   }
 
   async close(): Promise<void> {

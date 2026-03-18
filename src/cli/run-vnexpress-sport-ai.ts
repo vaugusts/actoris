@@ -6,10 +6,11 @@ import { chromium } from "playwright";
 
 import { OpenAIStructuredAnalyzer } from "../ai/OpenAIStructuredAnalyzer";
 import { AutomationKernel } from "../core/kernel";
+import { PlaywrightMcpDriver } from "../drivers/ui/PlaywrightMcpDriver";
+import { VnExpressMcpPage } from "../pom/VnExpressMcpPage";
 import {
   VnExpressPage,
-  type ArticleCandidate,
-  type CategoryNavigationResult
+  type ArticleCandidate
 } from "../pom/VnExpressPage";
 
 interface CategoryVerification {
@@ -26,6 +27,26 @@ interface CategoryVerification {
   }>;
 }
 
+type BrowserMode = "playwright" | "playwright-mcp";
+
+interface CategoryAuditPage {
+  openHome(): Promise<void>;
+  captureScreenshot(filePath: string): Promise<void>;
+  navigateToCategory(
+    ai: OpenAIStructuredAnalyzer,
+    model: string,
+    targetCategory: string,
+    maxSteps: number
+  ): Promise<import("../pom/VnExpressPage").CategoryNavigationResult>;
+  extractArticleCandidates(limit: number): Promise<ArticleCandidate[]>;
+}
+
+interface BrowserSession {
+  browserMode: BrowserMode;
+  page: CategoryAuditPage;
+  close(): Promise<void>;
+}
+
 const program = new Command();
 
 program
@@ -34,38 +55,48 @@ program
   .option("--model <model>", "OpenAI model to use", process.env.OPENAI_MODEL ?? "gpt-5-mini")
   .option("--category <category>", "Target VnExpress category", "Thể thao")
   .option("--max-steps <maxSteps>", "Maximum AI navigation steps", "3")
-  .action(async (options: { headed: boolean; model: string; category: string; maxSteps: string }) => {
+  .option(
+    "--browser-mode <mode>",
+    "Browser engine for the AI flow: playwright or playwright-mcp",
+    process.env.VNEXPRESS_BROWSER_MODE ?? "playwright-mcp"
+  )
+  .action(
+    async (options: {
+      headed: boolean;
+      model: string;
+      category: string;
+      maxSteps: string;
+      browserMode: string;
+    }) => {
     const kernel = new AutomationKernel();
     const context = await kernel.bootstrap();
     const startedAt = new Date();
     const artifactsDir = path.resolve(".artifacts/vnexpress-ai");
+    const browserMode = parseBrowserMode(options.browserMode);
     const categorySlug = slugify(options.category);
-    const screenshotPath = path.join(artifactsDir, `vnexpress-${categorySlug}-page.png`);
-    const reportPath = path.join(artifactsDir, `vnexpress-${categorySlug}-ai.json`);
+    const screenshotPath = path.join(artifactsDir, `vnexpress-${categorySlug}-${browserMode}-page.png`);
+    const reportPath = path.join(artifactsDir, `vnexpress-${categorySlug}-${browserMode}-ai.json`);
     const ai = new OpenAIStructuredAnalyzer({ model: options.model });
 
     await fs.mkdir(artifactsDir, { recursive: true });
 
-    const browser = await chromium.launch({ headless: !options.headed });
-    const page = await browser.newPage({
-      locale: "vi-VN"
-    });
-    const vnexpress = new VnExpressPage(page);
+    const session = await createBrowserSession(kernel, context, browserMode, options.headed);
 
     try {
-      await vnexpress.openHome();
-      const navigation = await vnexpress.navigateToCategory(
+      await session.page.openHome();
+      const navigation = await session.page.navigateToCategory(
         ai,
         options.model,
         options.category,
         Number(options.maxSteps)
       );
-      await vnexpress.captureScreenshot(screenshotPath);
+      await session.page.captureScreenshot(screenshotPath);
 
       if (!navigation.reached) {
         const failedReport = {
           auditedAt: new Date().toISOString(),
           model: options.model,
+          browserMode,
           targetCategory: options.category,
           navigation,
           screenshotPath
@@ -81,7 +112,7 @@ program
         );
       }
 
-      const articleCandidates = await vnexpress.extractArticleCandidates(20);
+      const articleCandidates = await session.page.extractArticleCandidates(20);
       const verification = await verifyCategoryArticles(
         ai,
         options.category,
@@ -100,6 +131,7 @@ program
       const report = {
         auditedAt: new Date().toISOString(),
         model: options.model,
+        browserMode,
         targetCategory: options.category,
         navigation,
         verification,
@@ -108,9 +140,9 @@ program
 
       await fs.writeFile(reportPath, JSON.stringify(report, null, 2), "utf8");
       await kernel.publishResult(context, {
-        id: `vnexpress-${categorySlug}-ai`,
+        id: `vnexpress-${categorySlug}-${browserMode}-ai`,
         channel: "ui",
-        name: `VnExpress ${options.category} category audit via OpenAI`,
+        name: `VnExpress ${options.category} category audit via OpenAI (${browserMode})`,
         passed,
         startedAt: startedAt.toISOString(),
         finishedAt: new Date().toISOString(),
@@ -132,6 +164,7 @@ program
       process.stdout.write(
         [
           `Target category: ${options.category}`,
+          `Browser mode: ${browserMode}`,
           `Navigated URL: ${navigation.finalUrl}`,
           `Verified 5 matching articles with model ${options.model}.`,
           `Report: ${reportPath}`,
@@ -139,8 +172,7 @@ program
         ].join("\n") + "\n"
       );
     } finally {
-      await page.close();
-      await browser.close();
+      await session.close();
     }
   });
 
@@ -238,4 +270,49 @@ function slugify(input: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+async function createBrowserSession(
+  kernel: AutomationKernel,
+  context: Awaited<ReturnType<AutomationKernel["bootstrap"]>>,
+  browserMode: BrowserMode,
+  headed: boolean
+): Promise<BrowserSession> {
+  if (browserMode === "playwright-mcp") {
+    const driver = kernel.createUiDriver(context, "playwright-mcp");
+    if (!(driver instanceof PlaywrightMcpDriver)) {
+      throw new Error("Expected a PlaywrightMcpDriver instance for browser mode playwright-mcp.");
+    }
+
+    await driver.start({ headless: !headed });
+    return {
+      browserMode,
+      page: new VnExpressMcpPage(driver),
+      close: async () => {
+        await driver.close();
+      }
+    };
+  }
+
+  const browser = await chromium.launch({ headless: !headed });
+  const page = await browser.newPage({
+    locale: "vi-VN"
+  });
+
+  return {
+    browserMode,
+    page: new VnExpressPage(page),
+    close: async () => {
+      await page.close();
+      await browser.close();
+    }
+  };
+}
+
+function parseBrowserMode(value: string): BrowserMode {
+  if (value === "playwright" || value === "playwright-mcp") {
+    return value;
+  }
+
+  throw new Error(`Unsupported browser mode "${value}". Use "playwright" or "playwright-mcp".`);
 }

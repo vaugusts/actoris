@@ -1,5 +1,6 @@
 export type DriverKind =
   | "playwright"
+  | "playwright-mcp"
   | "selenium"
   | "webdriverio"
   | "appium"
