@@ -13,6 +13,7 @@ The default implementation stays pragmatic: it is runnable with lightweight loca
 - `npm run test:keyword` runs the JSON keyword example.
 - `npm run test:ui:smoke` runs the local UI smoke path against the mock browser driver.
 - `npm run test:google -- "Playwright"` opens a real browser with Playwright, goes to Google, searches for the query, and saves a screenshot under a run-scoped directory such as `.artifacts/runs/<run-id>/google/`.
+- `npm run test:playwright:seed` runs the lightweight Playwright Test seed project used by the official Playwright Planner/Generator/Healer agent scaffold.
 - `npm run test:vnexpress:ai` opens `vnexpress.net`, lets OpenAI choose the next clickable component, navigates toward the requested category page, extracts five articles from that section, and verifies they match the category. The default browser backend is now `playwright-mcp`, with `--browser-mode playwright` available as a fallback.
 - `npm run test:vnexpress:attention:ai` opens `vnexpress.net` with `playwright-mcp`, extracts the latest visible homepage stories, visits each article, checks for reader-comment signals, and asks OpenAI to summarize which stories appear to be drawing reader attention.
 
@@ -21,6 +22,25 @@ Google may still serve an anti-bot "unusual traffic" page; when that happens the
 For the VnExpress AI flow, set `OPENAI_API_KEY` first. You can also override the target category, for example `npm run test:vnexpress:ai -- --category "Giải trí"`, switch browser backends with `--browser-mode playwright-mcp` or `--browser-mode playwright`, or adjust the AI navigation budget with `--max-steps 4`.
 For the VnExpress attention audit, the default scope is the latest 10 visible homepage items. You can change that with `npm run test:vnexpress:attention:ai -- --limit 8`. The audit writes a report and screenshot under `.artifacts/runs/<run-id>/vnexpress-ai/`, and it treats visible reader-comment UI or counts as practical evidence of audience attention.
 Each CLI execution now creates its own artifact directory under `.artifacts/runs/<run-id>/`.
+
+## Playwright Agents
+
+This repo now includes the official Playwright Test agent scaffold for the `vscode` loop:
+
+- agent definitions under `.github/agents/`
+- VS Code MCP config under `.vscode/mcp.json`
+- a Playwright Test seed project under `tests/playwright/`
+- a planning directory under `specs/`
+
+The seed project is intentionally isolated from Vitest and Cucumber so the Playwright Planner/Generator/Healer workflow does not interfere with the rest of the framework. The seed test uses the local mock server, which gives the agents a stable browser target for exploration and generation.
+
+Useful commands:
+
+- `npm run test:playwright:seed`
+- `npm run test:playwright`
+- `npm run playwright:agents:init:vscode`
+
+If you want to target a different loop later, rerun the Playwright initializer with another value such as `claude`, `copilot`, or `opencode`.
 
 ## 2. Technology Stack Recommendation
 

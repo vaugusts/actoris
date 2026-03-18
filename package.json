@@ -15,10 +15,13 @@
     "test:bdd": "cucumber-js",
     "test:keyword": "tsx src/cli/run-keyword.ts scenarios/login.keyword.json",
     "test:google": "tsx src/cli/run-google-search.ts",
+    "test:playwright": "npx playwright test",
+    "test:playwright:seed": "npx playwright test tests/playwright/seed.spec.ts",
     "test:vnexpress:ai": "tsx src/cli/run-vnexpress-sport-ai.ts",
     "test:vnexpress:attention:ai": "tsx src/cli/run-vnexpress-attention-ai.ts",
     "test:ui:smoke": "tsx src/cli/run-ui-smoke.ts",
     "test:mobile:smoke": "tsx src/cli/run-mobile-smoke.ts",
+    "playwright:agents:init:vscode": "npx playwright init-agents --loop=vscode --config=playwright.config.ts",
     "mock:start": "tsx src/mock/server.ts"
   },
   "dependencies": {
