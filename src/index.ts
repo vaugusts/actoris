@@ -12,6 +12,7 @@ export * from "./mock/server";
 export * from "./pom/DashboardPage";
 export * from "./pom/GoogleSearchPage";
 export * from "./pom/LoginPage";
+export * from "./pom/VnExpressAttentionMcpPage";
 export * from "./pom/VnExpressMcpPage";
 export * from "./pom/VnExpressPage";
 export * from "./workflows/LoginWorkflow";

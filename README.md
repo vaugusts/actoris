@@ -14,10 +14,12 @@ The default implementation stays pragmatic: it is runnable with lightweight loca
 - `npm run test:ui:smoke` runs the local UI smoke path against the mock browser driver.
 - `npm run test:google -- "Playwright"` opens a real browser with Playwright, goes to Google, searches for the query, and saves a screenshot under a run-scoped directory such as `.artifacts/runs/<run-id>/google/`.
 - `npm run test:vnexpress:ai` opens `vnexpress.net`, lets OpenAI choose the next clickable component, navigates toward the requested category page, extracts five articles from that section, and verifies they match the category. The default browser backend is now `playwright-mcp`, with `--browser-mode playwright` available as a fallback.
+- `npm run test:vnexpress:attention:ai` opens `vnexpress.net` with `playwright-mcp`, extracts the latest visible homepage stories, visits each article, checks for reader-comment signals, and asks OpenAI to summarize which stories appear to be drawing reader attention.
 
 For the Google example, install a browser once with `npx playwright install chromium`.
 Google may still serve an anti-bot "unusual traffic" page; when that happens the script now fails intentionally and writes `google-search-failure.png` instead of claiming success.
 For the VnExpress AI flow, set `OPENAI_API_KEY` first. You can also override the target category, for example `npm run test:vnexpress:ai -- --category "Giải trí"`, switch browser backends with `--browser-mode playwright-mcp` or `--browser-mode playwright`, or adjust the AI navigation budget with `--max-steps 4`.
+For the VnExpress attention audit, the default scope is the latest 10 visible homepage items. You can change that with `npm run test:vnexpress:attention:ai -- --limit 8`. The audit writes a report and screenshot under `.artifacts/runs/<run-id>/vnexpress-ai/`, and it treats visible reader-comment UI or counts as practical evidence of audience attention.
 Each CLI execution now creates its own artifact directory under `.artifacts/runs/<run-id>/`.
 
 ## 2. Technology Stack Recommendation

@@ -16,6 +16,7 @@
     "test:keyword": "tsx src/cli/run-keyword.ts scenarios/login.keyword.json",
     "test:google": "tsx src/cli/run-google-search.ts",
     "test:vnexpress:ai": "tsx src/cli/run-vnexpress-sport-ai.ts",
+    "test:vnexpress:attention:ai": "tsx src/cli/run-vnexpress-attention-ai.ts",
     "test:ui:smoke": "tsx src/cli/run-ui-smoke.ts",
     "test:mobile:smoke": "tsx src/cli/run-mobile-smoke.ts",
     "mock:start": "tsx src/mock/server.ts"
